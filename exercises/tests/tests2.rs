@@ -12,7 +12,7 @@
 mod tests {
     #[test]
     fn you_can_assert_eq() {
-        assert_eq!(1 + 1,2);
+        assert_eq!(1+3,4);
         // assert_eq!(String::from("Bob"),"1u8");
     }
 }
