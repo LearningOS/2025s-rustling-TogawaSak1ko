@@ -11,7 +11,8 @@
 
 // I AM DONE
 
-use std::f32;
+// use std::f32;
+use core::f32;
 
 fn main() {
     let pi = f32::consts::PI;
