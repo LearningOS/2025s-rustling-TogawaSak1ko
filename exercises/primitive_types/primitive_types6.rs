@@ -6,7 +6,7 @@
 // Execute `rustlings hint primitive_types6` or use the `hint` watch subcommand
 // for a hint.
 
-
+// DONE
 #[test]
 fn indexing_tuple() {
     let numbers = (1, 2, 3);

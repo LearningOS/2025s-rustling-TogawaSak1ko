@@ -12,8 +12,8 @@
 //
 // Execute `rustlings hint cow1` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
-
+// I AM DONE
+// 用于在需要修改数据时才进行克隆（clone），否则直接借用（borrow）。
 use std::borrow::Cow;
 
 fn abs_all<'a, 'b>(input: &'a mut Cow<'b, [i32]>) -> &'a mut Cow<'b, [i32]> {
@@ -49,9 +49,11 @@ mod tests {
         let mut input = Cow::from(&slice[..]);
         match abs_all(&mut input) {
             // TODO
+            Cow::Borrowed(_) => Ok(()),
+            _ => Err("Expected Borrowed value"),
         }
     }
-
+    // 而如果数据本来就是 Owned 的，Cow 的行为会有所不同。
     #[test]
     fn owned_no_mutation() -> Result<(), &'static str> {
         // We can also pass `slice` without `&` so Cow owns it directly. In this
@@ -61,6 +63,8 @@ mod tests {
         let mut input = Cow::from(slice);
         match abs_all(&mut input) {
             // TODO
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 
@@ -73,6 +77,8 @@ mod tests {
         let mut input = Cow::from(slice);
         match abs_all(&mut input) {
             // TODO
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 }

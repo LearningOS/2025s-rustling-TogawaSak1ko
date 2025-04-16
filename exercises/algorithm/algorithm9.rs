@@ -2,11 +2,11 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+// I AM DONE
 
 use std::cmp::Ord;
 use std::default::Default;
-
+#[derive(Debug)]
 pub struct Heap<T>
 where
     T: Default,
@@ -15,7 +15,7 @@ where
     items: Vec<T>,
     comparator: fn(&T, &T) -> bool,
 }
-
+const HEAD_INDEX:usize = 1;
 impl<T> Heap<T>
 where
     T: Default,
@@ -38,6 +38,9 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        self.pop_up(self.count);
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +61,55 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+		// 0
+        let mut parent_index = idx;
+
+        let l_child_index = self.left_child_idx(parent_index);
+        if l_child_index > self.count {
+            return 0;
+        }
+        
+        let r_child_index = l_child_index + 1;
+        if r_child_index > self.count || (self.comparator)(&self.items[l_child_index],&self.items[r_child_index]) {
+            return l_child_index;
+        }
+        return r_child_index;
+    }
+    fn swim_down(&mut self,idx:usize) {
+        let mut parent_index = idx;
+        // let mut smallest_child_index = self.smallest_child_idx(parent_index);
+
+        // while smallest_child_index > 0 && (self.comparator)(&self.items[smallest_child_index],&self.items[parent_index]) {
+        //     self.items.swap(smallest_child_index,parent_index);
+        //     parent_index = smallest_child_index;
+        //     smallest_child_index = self.smallest_child_idx(parent_index);
+        // }
+
+        loop {
+            let mut child_index = self.smallest_child_idx(parent_index);
+            if (child_index == 0 || !(self.comparator)(&self.items[child_index],&self.items[parent_index])) {
+                break;
+            }
+            self.items.swap(child_index,parent_index);
+            parent_index = child_index;
+        }
+    }
+
+    fn pop_up(&mut self,idx:usize) {
+        // if idx == HEAD_INDEX {
+        //     return ;
+        // }
+
+        let mut curr = idx;
+        while curr > HEAD_INDEX {
+            let parent_index = self.parent_idx(curr);
+            if (self.comparator)(&self.items[curr],&self.items[parent_index]) {
+                self.items.swap(curr,parent_index);
+                curr = parent_index;
+            } else {
+                break;
+            }
+        }
     }
 }
 
@@ -85,7 +136,19 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+		// None
+        if self.is_empty() {
+            return None;
+        }
+
+        self.items.swap(HEAD_INDEX,self.count);
+        let old_head = self.items.pop();
+        self.count -= 1;
+        if self.count > 0 {
+            self.swim_down(HEAD_INDEX);
+        }
+
+        return old_head;
     }
 }
 
@@ -150,5 +213,26 @@ mod tests {
         assert_eq!(heap.next(), Some(4));
         heap.add(1);
         assert_eq!(heap.next(), Some(2));
+    }
+    #[test]
+    fn test_max_heap2() {
+        let mut heap = MaxHeap::new();
+        heap.add(4);
+        heap.add(2);
+        heap.add(9);
+        heap.add(11);
+        heap.add(12);
+        assert_eq!(heap.len(), 5);
+        assert_eq!(heap.next(), Some(12));
+        assert_eq!(heap.next(), Some(11));
+        assert_eq!(heap.next(), Some(9));
+        assert_eq!(heap.next(), Some(4));
+        assert_eq!(heap.next(), Some(2));
+        // heap.add(1);
+        // assert_eq!(heap.next(), Some(2));
+        // println!("{:?}",heap.next());
+        // println!("{:?}",heap.next());
+        // println!("{:?}",heap.next());
+        // println!("{:?}",heap.next());
     }
 }
